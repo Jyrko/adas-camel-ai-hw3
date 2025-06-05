@@ -3442,6 +3442,26 @@ files = [
 pyreadline3 = {version = "*", markers = "sys_platform == \"win32\" and python_version >= \"3.8\""}
 
 [[package]]
+name = "humanlayer"
+version = "0.7.9"
+description = "humanlayer"
+optional = false
+python-versions = "<4.0,>=3.10"
+groups = ["main"]
+files = [
+    {file = "humanlayer-0.7.9-py3-none-any.whl", hash = "sha256:649cf2a19467c7e678738650d92ce213ca69fd993130a3db114e4ac52138b684"},
+    {file = "humanlayer-0.7.9.tar.gz", hash = "sha256:33408b42ff04f5ead4dad042da3987cfc1fc41a5a942f521feab46204056b70a"},
+]
+
+[package.dependencies]
+aiohttp = ">=3.11.10,<4.0.0"
+click = ">=8.1.7,<9.0.0"
+pydantic = ">=2.8.2,<3.0.0"
+python-dotenv = ">=1.0.1,<2.0.0"
+python-slugify = ">=8.0.4,<9.0.0"
+requests = ">=2.32.3,<3.0.0"
+
+[[package]]
 name = "hyperframe"
 version = "6.1.0"
 description = "Pure-Python HTTP/2 framing"
@@ -7735,6 +7755,24 @@ typing-extensions = ">=4.9.0"
 XlsxWriter = ">=0.5.7"
 
 [[package]]
+name = "python-slugify"
+version = "8.0.4"
+description = "A Python slugify application that also handles Unicode"
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "python-slugify-8.0.4.tar.gz", hash = "sha256:59202371d1d05b54a9e7720c5e038f928f45daaffe41dd10822f3907b937c856"},
+    {file = "python_slugify-8.0.4-py2.py3-none-any.whl", hash = "sha256:276540b79961052b66b7d116620b36518847f52d5fd9e3a70164fc8c50faa6b8"},
+]
+
+[package.dependencies]
+text-unidecode = ">=1.3"
+
+[package.extras]
+unidecode = ["Unidecode (>=1.1.1)"]
+
+[[package]]
 name = "python3-xlib"
 version = "0.15"
 description = "Python3 X Library"
@@ -9718,6 +9756,18 @@ files = [
 tests = ["pytest", "pytest-cov"]
 
 [[package]]
+name = "text-unidecode"
+version = "1.3"
+description = "The most basic Text::Unidecode port"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
+    {file = "text_unidecode-1.3-py2.py3-none-any.whl", hash = "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8"},
+]
+
+[[package]]
 name = "textblob"
 version = "0.17.1"
 description = "Simple, Pythonic text processing. Sentiment analysis, part-of-speech tagging, noun phrase parsing, and more."
@@ -11290,4 +11340,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12, <3.13"
-content-hash = "7890ae8b841e9fd43f4a66fbfb57e22fc68938bf18d26f2ccab44b5dca8bd9fe"
+content-hash = "7a5c3072913fe9716271786a52a37d3bd3fe012db37ec7000a5b9a87d707f005"
