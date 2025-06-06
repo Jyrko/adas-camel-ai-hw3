@@ -6,6 +6,7 @@ from camel.types import ModelPlatformType, ModelType, RoleType
 from camel.generators import SystemMessageGenerator
 from camel.toolkits import FunctionTool, HumanToolkit, SearchToolkit
 from camel.toolkits.async_browser_toolkit import AsyncBrowserToolkit
+from camel.interpreters import InternalPythonInterpreter
 
 from linkup import LinkupClient
 
@@ -16,36 +17,6 @@ default_model = ModelFactory.create(
   model_type=ModelType.GPT_4O
 )
 
-class SampleAgent(ChatAgent):
-  """
-    A sample agent with access to showcase calculator and human-in-the-loop
-  """
-  agent_role = BaseMessage.make_assistant_message(
-    role_name="sample_agent",
-    content=(
-      "You are a sample agent."
-    )
-  )
-
-  def calculator(n1: int, n2: int) -> int:
-    """A simple calculator, use as a tool"""
-    print("calculator is used")
-    return n1 + n2
-  
-  def __init__(self, model=default_model, message_window_size: int = 20):
-    human_toolkit = HumanToolkit()
-
-    sample_tools = [
-      FunctionTool(self.calculator),
-      *human_toolkit.get_tools()
-    ]
-
-    super().__init__(
-      model=model,
-      system_message=self.agent_role,
-      message_window_size=message_window_size,
-      tools=sample_tools
-    )
 
 class PreferenceAgent(ChatAgent):
   """
@@ -53,7 +24,10 @@ class PreferenceAgent(ChatAgent):
   """
   agent_role = BaseMessage.make_assistant_message(
     role_name="preference_agent",
-    content="You are a preference agent, which collects (asks) and stores the preferences of the user regarding jobs."
+    content=(
+      "You are a preference agent, which collects (asks) and stores the preferences of the user regarding jobs." \
+      " No more than 10 questions. Ask about revelant skills."
+    )
   )
 
   human_toolkit = HumanToolkit()
@@ -81,7 +55,7 @@ class JobSearchAgent(ChatAgent):
   def get_job_search_data(self, input: str): 
     "Get the latest job postings data"
     response_linkup = self.linkup_client.search(
-      query=f"Find job postings for the given skills/preferences: {input}",
+      query=f"Find job postings for the given skills/preferences, give direct links in your output. Skills/preferences: {input}",
       depth="standard",
       output_type="sourcedAnswer"
     ) 
@@ -107,7 +81,8 @@ class WebAgent(ChatAgent):
   """
   agent_role = BaseMessage.make_assistant_message(
     role_name="preference_agent",
-    content="You are a web search agent, which use one of the search engines to find additional resources that will help in the preparation for the job interview"
+    content="You are a web search agent, which use one of the search engines to find additional resources that will help "
+    "in the preparation for the job interview. Provide at least 5 helpful resources. Make a 2 week preparation plan based on your search." \
   )
 
 
@@ -129,7 +104,10 @@ class CodingAgent(EmbodiedAgent):
     a coding agent that will develop a HTML website to summarize the results from workforce
     """
     role = 'Programmer'
-    task = 'Summarize the workforce results by presenting it on a HTML website, runned in Flask'
+    task = (
+      'Summarize the workforce results by presenting it on a HTML page in Flask framework.'
+      ' Output only valid python code without any explanations at all, so the output can be directly run by the interpreter.'
+    )
 
     agent_spec = dict(role=role, task=task)
     role_tuple = (role, RoleType.EMBODIMENT)
@@ -140,4 +118,6 @@ class CodingAgent(EmbodiedAgent):
         super().__init__(system_message=self.agent_msg, 
                          model=model, 
                          tool_agents=None, 
-                         code_interpreter=None)
+                         code_interpreter=None,
+                         verbose=True
+                         )

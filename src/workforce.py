@@ -12,7 +12,6 @@ async def run_workforce(task_input: str) -> str:
   preference_agent = PreferenceAgent()
   job_search_agent = JobSearchAgent()
   web_agent = WebAgent()
-  coding_agent = CodingAgent()
 
   workforce.add_single_agent_worker(
     "agent, which collects user preferences about the job. Always runs first.", 
@@ -26,10 +25,6 @@ async def run_workforce(task_input: str) -> str:
     "agent, which use one of the search engines to find additional resources that will help in the preparation for the job interview.",
     worker=web_agent
   )
-  workforce.add_single_agent_worker(
-    "a coding agent that will develop a HTML website to summarize the results from workforce",
-    worker=coding_agent
-  )
 
   task = Task(
     content=task_input,
@@ -37,5 +32,4 @@ async def run_workforce(task_input: str) -> str:
   )
 
   task = workforce.process_task(task=task)
-  print(task.result)
   return task.result

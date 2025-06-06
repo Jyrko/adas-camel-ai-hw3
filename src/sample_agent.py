@@ -1,30 +1,26 @@
 from dotenv import load_dotenv
-from camel.models import ModelFactory
-from camel.types import ModelPlatformType, ModelType
 from camel.toolkits import HumanToolkit
 from humanlayer.core.approval import HumanLayer
+from camel.agents import EmbodiedAgent
+from camel.generators import SystemMessageGenerator as sys_msg_gen
+from camel.messages import BaseMessage as bm
+from camel.types import RoleType
 
-from agents import JobSearchAgent
+from agents import CodingAgent
 
 
 load_dotenv(override=True)
 
-hl = HumanLayer(verbose=True)
-human_toolkit = HumanToolkit()
-
-
 def run_sample_agent() -> None: 
-  model = ModelFactory.create(
-    model_platform=ModelPlatformType.OPENAI,
-    model_type=ModelType.GPT_4O
+  user_request = bm.make_user_message(
+      role_name="User",
+      content="Create a Python script that generates the first 10 Fibonacci numbers and run it."
   )
 
-  agent = JobSearchAgent(model=model)
+  coding_agent = CodingAgent()
+  response = coding_agent.step(user_request)
+  print(response.msg.content)
 
-  response = agent.step("What are currently available job posting for a Senior Python developer in Warsaw with salaray more than 16k PLN per month")
-
-
-  print(response.msgs[-1].content)
 
 
 if __name__ == "__main__": 
