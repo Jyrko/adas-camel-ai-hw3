@@ -14,15 +14,15 @@ async def run_workforce(task_input: str) -> str:
   web_agent = WebAgent()
 
   workforce.add_single_agent_worker(
-    "agent, which collects user preferences about the job", 
+    "agent, which collects user preferences about the job. Always runs first.", 
     worker=preference_agent
   )
   workforce.add_single_agent_worker(
-    "agent, which use one of the search engines to find additional resources that will help in the preparation for the job interview",
+    "agent, which searches via API relevant job postings",
     worker=job_search_agent
   )
   workforce.add_single_agent_worker(
-    "agent, which searches via API relevant job postings",
+    "agent, which use one of the search engines to find additional resources that will help in the preparation for the job interview.",
     worker=web_agent
   )
 

@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 from camel.messages import BaseMessage
 from camel.models import ModelFactory
 from camel.types import ModelPlatformType, ModelType
-from camel.toolkits import FunctionTool, HumanToolkit, SearchToolkit, BrowserToolkit
+from camel.toolkits import FunctionTool, HumanToolkit, SearchToolkit
+from camel.toolkits.async_browser_toolkit import AsyncBrowserToolkit
 
 from linkup import LinkupClient
 
@@ -114,7 +115,7 @@ class WebAgent(ChatAgent):
   def __init__(self, model=default_model, message_window_size: int = 20):
     search_tools = [
       FunctionTool(SearchToolkit(timeout=5000).search_google),
-      # *BrowserToolkit(headless=True, channel="chrome", web_agent_model=model, planning_agent_model=model).get_tools()
+      *AsyncBrowserToolkit(headless=True, channel="chrome", web_agent_model=model, planning_agent_model=model).get_tools()
     ]
 
     super().__init__(
