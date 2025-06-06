@@ -114,7 +114,7 @@ class WebAgent(ChatAgent):
   def __init__(self, model=default_model, message_window_size: int = 20):
     search_tools = [
       FunctionTool(SearchToolkit(timeout=5000).search_google),
-      *BrowserToolkit(headless=True, channel="chrome", web_agent_model=model, planning_agent_model=model).get_tools()
+      # *BrowserToolkit(headless=True, channel="chrome", web_agent_model=model, planning_agent_model=model).get_tools()
     ]
 
     super().__init__(

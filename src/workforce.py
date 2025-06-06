@@ -2,7 +2,7 @@ from camel.societies.workforce import Workforce
 from camel.tasks import Task
 from agents import PreferenceAgent, WebAgent, JobSearchAgent
 
-def run_workforce(task_input: str) -> str: 
+async def run_workforce(task_input: str) -> str: 
   workforce = Workforce(
     "agent workforce that will facilitate the process of finding job postings"
     "relevant to user's preferences and after user approval preparing a two "
@@ -27,10 +27,10 @@ def run_workforce(task_input: str) -> str:
   )
 
   task = Task(
-    content=task_input
+    content=task_input,
+    id="0"
   )
 
-  task = workforce.process_task(task)
+  task = workforce.process_task(task=task)
   print(task.result)
   return task.result
-
