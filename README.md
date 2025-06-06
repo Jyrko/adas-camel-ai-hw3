@@ -14,7 +14,7 @@ The system consists of multiple specialized agents that work together:
 ## Prerequisites
 
 - Python 3.12
-- Poetry (for dependency management)
+- Poetry (for dependency management) or pip
 - Required API keys:
   - OpenAI API key
   - LinkUp API key (for job search)
@@ -28,9 +28,16 @@ The system consists of multiple specialized agents that work together:
    cd adas-camel-ai-hw3
    ```
 
-2. Install dependencies using Poetry:
+2. Install dependencies using one of these methods:
+
+   **Using Poetry (recommended):**
    ```bash
    poetry install
+   ```
+
+   **Using pip with requirements.txt:**
+   ```bash
+   pip install -r requirements.txt
    ```
 
 3. Create a `.env` file in the project root based on the provided `.env.example`:
@@ -51,8 +58,14 @@ The system consists of multiple specialized agents that work together:
 
 Run the main application:
 
+**Using Poetry:**
 ```bash
 poetry run python src/main.py
+```
+
+**Using pip:**
+```bash
+python src/main.py
 ```
 
 The application will:
