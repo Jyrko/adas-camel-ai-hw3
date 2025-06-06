@@ -9,17 +9,21 @@ def run_workforce(task_input: str) -> str:
     "week interview preparation plan" 
   )
 
+  preference_agent = PreferenceAgent()
+  web_agent = WebAgent()
+  job_search_agent = JobSearchAgent()
+
   workforce.add_single_agent_worker(
     "agent, which collects user preferences about the job", 
-    worker=PreferenceAgent
+    worker=preference_agent
   )
   workforce.add_single_agent_worker(
     "agent, which searches via API relevant job postings",
-    worker=WebAgent
+    worker=web_agent
   )
   workforce.add_single_agent_worker(
     "agent, which use one of the search engines to find additional resources that will help in the preparation for the job interview",
-    worker=JobSearchAgent
+    worker=job_search_agent
   )
 
   task = Task(

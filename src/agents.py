@@ -1,11 +1,18 @@
 from camel.agents import ChatAgent
 from dotenv import load_dotenv
 from camel.messages import BaseMessage
-from linkup import LinkupClient
+from camel.models import ModelFactory
+from camel.types import ModelPlatformType, ModelType
 from camel.toolkits import FunctionTool, HumanToolkit, SearchToolkit
+
+from linkup import LinkupClient
 
 load_dotenv(override=True)
 
+default_model = ModelFactory.create(
+  model_platform=ModelPlatformType.OPENAI,
+  model_type=ModelType.GPT_4O
+)
 
 class SampleAgent(ChatAgent):
   """
@@ -23,7 +30,7 @@ class SampleAgent(ChatAgent):
     print("calculator is used")
     return n1 + n2
   
-  def __init__(self, model, message_window_size: int = 20):
+  def __init__(self, model=default_model, message_window_size: int = 20):
     human_toolkit = HumanToolkit()
 
     sample_tools = [
@@ -49,7 +56,7 @@ class PreferenceAgent(ChatAgent):
 
   human_toolkit = HumanToolkit()
 
-  def __init__(self, model, message_window_size: int = 20):
+  def __init__(self, model=default_model, message_window_size: int = 20):
 
     super().__init__(
       model=model, 
@@ -70,6 +77,8 @@ class JobSearchAgent(ChatAgent):
   linkup = LinkupClient()
 
   def get_job_search_data(input: str): 
+    "Tool for getting the latest job postings data"
+    print("using the job search tool with the input: " + input)
     response_linkup = JobSearchAgent.linkup.search(
       query=input,
       depth="deep",
@@ -77,7 +86,7 @@ class JobSearchAgent(ChatAgent):
     ) 
     return response_linkup.answer
 
-  def __init__(self, model, message_window_size: int = 20):
+  def __init__(self, model=default_model, message_window_size: int = 20):
     search_tools = [
       FunctionTool(self.get_job_search_data)
     ]
@@ -102,7 +111,7 @@ class WebAgent(ChatAgent):
     FunctionTool(SearchToolkit(timeout=5000).search_google),
   ]
 
-  def __init__(self, model, message_window_size: int = 20):
+  def __init__(self, model=default_model, message_window_size: int = 20):
     super().__init__(
       model=model,
       system_message=self.agent_role,

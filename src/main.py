@@ -1,12 +1,10 @@
 from dotenv import load_dotenv
-from camel.agents import ChatAgent
 from camel.models import ModelFactory
 from camel.types import ModelPlatformType, ModelType
 from camel.toolkits import FunctionTool, HumanToolkit
 from humanlayer.core.approval import HumanLayer
-from linkup import LinkupClient
 
-from agents import SampleAgent
+from agents import JobSearchAgent, SampleAgent
 
 
 load_dotenv(override=True)
@@ -21,10 +19,10 @@ def main() -> None:
     model_type=ModelType.GPT_4O
   )
 
-  agent = SampleAgent(model=model)
+  agent = JobSearchAgent(model=model)
 
-
-  response = agent.step("Ask me some question and wait for my input, do not stop unless expicitly said to do so")
+  response = agent.step("What are currently available job posting for a Senior Python developer in Warsaw with salaray more than 16k PLN per month")
+  
 
   print(response.msgs[-1].content)
 
