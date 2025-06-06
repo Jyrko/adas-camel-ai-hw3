@@ -1,17 +1,103 @@
-from turtle import mode
 from camel.agents import ChatAgent
+from dotenv import load_dotenv
 from camel.messages import BaseMessage
+from linkup import LinkupClient
+from camel.toolkits import FunctionTool, HumanToolkit, SearchToolkit
 
+load_dotenv(override=True)
+
+
+class SampleAgent(ChatAgent):
+  """
+    A sample agent with access to showcase calculator and human-in-the-loop
+  """
+  agent_role = BaseMessage.make_assistant_message(
+    role_name="sample_agent",
+    content=(
+      "You are a sample agent."
+    )
+  )
+
+  def calculator(n1: int, n2: int) -> int:
+    """A simple calculator, use as a tool"""
+    print("calculator is used")
+    return n1 + n2
+  
+  def __init__(self, model, message_window_size: int = 20):
+    human_toolkit = HumanToolkit()
+
+    sample_tools = [
+      FunctionTool(self.calculator),
+      *human_toolkit.get_tools()
+    ]
+
+    super().__init__(
+      model=model,
+      system_message=self.agent_role,
+      message_window_size=message_window_size,
+      tools=sample_tools
+    )
 
 class PreferenceAgent(ChatAgent):
   """
-    A preference agent, which collects the preferences of the user regarding jobs
+    A preference agent, which collects and stores the preferences of the user regarding jobs
   """
   agent_role = BaseMessage.make_assistant_message(
     role_name="preference_agent",
-    content="You are a preference agent, which collects the preferences of the user regarding jobs."
+    content="You are a preference agent, which collects and stores the preferences of the user regarding jobs."
   )
 
   def __init__(self, model, message_window_size: int = 20):
     super().__init__(model=model, system_message=self.agent_role, message_window_size=message_window_size)
 
+class JobSearchAgent(ChatAgent):
+  """
+    A job search agent, which searches the information about related job posts
+  """
+  agent_role = BaseMessage.make_assistant_message(
+    role_name="job_search_agent",
+    content="You are a job search agent, which searches the information about related job posts"
+  )
+
+  linkup = LinkupClient()
+
+  def get_job_search_data(input: str): 
+    response_linkup = JobSearchAgent.linkup.search(
+      query=input,
+      depth="deep",
+      output_type="sourcedAnswer"
+    ) 
+    return response_linkup.answer
+
+  def __init__(self, model, message_window_size: int = 20):
+    search_tools = [
+      FunctionTool(self.get_job_search_data)
+    ]
+
+    super().__init__(
+      model=model,
+      system_message=self.agent_role,
+      message_window_size=message_window_size,
+      tools=search_tools
+    )
+
+class WebAgent(ChatAgent):
+  """
+    An agent, which use one of the search engines to find additional resources that will help in the preparation for the job interview
+  """
+  agent_role = BaseMessage.make_assistant_message(
+    role_name="preference_agent",
+    content="You are a web search agent, which use one of the search engines to find additional resources that will help in the preparation for the job interview"
+  )
+
+  _search_tools = [
+    FunctionTool(SearchToolkit(timeout=5000).search_google),
+  ]
+
+  def __init__(self, model, message_window_size: int = 20):
+    super().__init__(
+      model=model,
+      system_message=self.agent_role,
+      message_window_size=message_window_size,
+      tools=self._search_tools
+    )

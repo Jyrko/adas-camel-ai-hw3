@@ -2,17 +2,17 @@ from dotenv import load_dotenv
 from camel.agents import ChatAgent
 from camel.models import ModelFactory
 from camel.types import ModelPlatformType, ModelType
-from camel.toolkits import FunctionTool
+from camel.toolkits import FunctionTool, HumanToolkit
 from humanlayer.core.approval import HumanLayer
+from linkup import LinkupClient
+
+from agents import SampleAgent
+
 
 load_dotenv(override=True)
 
 hl = HumanLayer(verbose=True)
-
-@hl.human()
-def calculator(n1: int, n2: int) -> int:
-  """A simple calculator, use as a tool"""
-  return n1 + n2
+human_toolkit = HumanToolkit()
 
 
 def main() -> None: 
@@ -21,13 +21,10 @@ def main() -> None:
     model_type=ModelType.GPT_4O
   )
 
-  agent = ChatAgent(
-    system_message="You are a smart agent",
-    model=model,
-    tools=[calculator]
-  )
+  agent = SampleAgent(model=model)
 
-  response = agent.step("2 + 4123 is ?")
+
+  response = agent.step("Ask me some question and wait for my input, do not stop unless expicitly said to do so")
 
   print(response.msgs[-1].content)
 
