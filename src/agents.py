@@ -1,8 +1,9 @@
-from camel.agents import ChatAgent
+from camel.agents import ChatAgent, EmbodiedAgent
 from dotenv import load_dotenv
 from camel.messages import BaseMessage
 from camel.models import ModelFactory
-from camel.types import ModelPlatformType, ModelType
+from camel.types import ModelPlatformType, ModelType, RoleType
+from camel.generators import SystemMessageGenerator
 from camel.toolkits import FunctionTool, HumanToolkit, SearchToolkit
 from camel.toolkits.async_browser_toolkit import AsyncBrowserToolkit
 
@@ -79,10 +80,8 @@ class JobSearchAgent(ChatAgent):
 
   def get_job_search_data(self, input: str): 
     "Get the latest job postings data"
-    print()
-    print(input)
     response_linkup = self.linkup_client.search(
-      query=input,
+      query=f"Find job postings for the given skills/preferences: {input}",
       depth="standard",
       output_type="sourcedAnswer"
     ) 
@@ -124,3 +123,21 @@ class WebAgent(ChatAgent):
       message_window_size=message_window_size,
       tools=search_tools
     )
+
+class CodingAgent(EmbodiedAgent):
+    """
+    a coding agent that will develop a HTML website to summarize the results from workforce
+    """
+    role = 'Programmer'
+    task = 'Summarize the workforce results by presenting it on a HTML website, runned in Flask'
+
+    agent_spec = dict(role=role, task=task)
+    role_tuple = (role, RoleType.EMBODIMENT)
+
+    agent_msg = SystemMessageGenerator().from_dict(meta_dict=agent_spec, role_tuple=role_tuple)
+
+    def __init__(self, model = default_model):
+        super().__init__(system_message=self.agent_msg, 
+                         model=model, 
+                         tool_agents=None, 
+                         code_interpreter=None)
