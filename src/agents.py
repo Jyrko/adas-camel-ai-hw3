@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from camel.messages import BaseMessage
 from camel.models import ModelFactory
 from camel.types import ModelPlatformType, ModelType
-from camel.toolkits import FunctionTool, HumanToolkit, SearchToolkit
+from camel.toolkits import FunctionTool, HumanToolkit, SearchToolkit, BrowserToolkit
 
 from linkup import LinkupClient
 
@@ -74,14 +74,15 @@ class JobSearchAgent(ChatAgent):
     content="You are a job search agent, which searches the information about related job posts"
   )
 
-  linkup = LinkupClient()
+  linkup_client = LinkupClient()
 
-  def get_job_search_data(input: str): 
-    "Tool for getting the latest job postings data"
-    print("using the job search tool with the input: " + input)
-    response_linkup = JobSearchAgent.linkup.search(
+  def get_job_search_data(self, input: str): 
+    "Get the latest job postings data"
+    print()
+    print(input)
+    response_linkup = self.linkup_client.search(
       query=input,
-      depth="deep",
+      depth="standard",
       output_type="sourcedAnswer"
     ) 
     return response_linkup.answer
@@ -90,6 +91,8 @@ class JobSearchAgent(ChatAgent):
     search_tools = [
       FunctionTool(self.get_job_search_data)
     ]
+
+    print(search_tools[0].get_function_description())
 
     super().__init__(
       model=model,
@@ -107,14 +110,16 @@ class WebAgent(ChatAgent):
     content="You are a web search agent, which use one of the search engines to find additional resources that will help in the preparation for the job interview"
   )
 
-  _search_tools = [
-    FunctionTool(SearchToolkit(timeout=5000).search_google),
-  ]
 
   def __init__(self, model=default_model, message_window_size: int = 20):
+    search_tools = [
+      FunctionTool(SearchToolkit(timeout=5000).search_google),
+      *BrowserToolkit(headless=True, channel="chrome", web_agent_model=model, planning_agent_model=model).get_tools()
+    ]
+
     super().__init__(
       model=model,
       system_message=self.agent_role,
       message_window_size=message_window_size,
-      tools=self._search_tools
+      tools=search_tools
     )

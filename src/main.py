@@ -5,6 +5,7 @@ from camel.toolkits import FunctionTool, HumanToolkit
 from humanlayer.core.approval import HumanLayer
 
 from agents import JobSearchAgent, SampleAgent
+from workforce import run_workforce
 
 
 load_dotenv(override=True)
@@ -14,17 +15,18 @@ human_toolkit = HumanToolkit()
 
 
 def main() -> None: 
-  model = ModelFactory.create(
-    model_platform=ModelPlatformType.OPENAI,
-    model_type=ModelType.GPT_4O
-  )
+  run_workforce("I am looking for a job, ask me questions if needed")
+  # model = ModelFactory.create(
+  #   model_platform=ModelPlatformType.OPENAI,
+  #   model_type=ModelType.GPT_4O
+  # )
 
-  agent = JobSearchAgent(model=model)
+  # agent = JobSearchAgent(model=model)
 
-  response = agent.step("What are currently available job posting for a Senior Python developer in Warsaw with salaray more than 16k PLN per month")
-  
+  # response = agent.step("What are currently available job posting for a Senior Python developer in Warsaw with salaray more than 16k PLN per month")
 
-  print(response.msgs[-1].content)
+
+  # print(response.msgs[-1].content)
 
 
 if __name__ == "__main__": 
