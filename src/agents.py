@@ -32,7 +32,7 @@ class PreferenceAgent(ChatAgent):
 
   human_toolkit = HumanToolkit()
 
-  def __init__(self, model=default_model, message_window_size: int = 20):
+  def __init__(self, model=default_model, message_window_size: int = 30):
 
     super().__init__(
       model=model, 
@@ -47,7 +47,11 @@ class JobSearchAgent(ChatAgent):
   """
   agent_role = BaseMessage.make_assistant_message(
     role_name="job_search_agent",
-    content="You are a job search agent, which searches the information about related job posts"
+    content=(
+      "You are a job search agent, which searches the information about related job posts."
+      " Provide at least 5 job postings. Find job postings for the given skills/preferences,"
+      " give direct links in your output"
+    )
   )
 
   linkup_client = LinkupClient()
@@ -119,5 +123,5 @@ class CodingAgent(EmbodiedAgent):
                          model=model, 
                          tool_agents=None, 
                          code_interpreter=None,
-                         verbose=True
-                         )
+                         verbose=True,
+                        )
